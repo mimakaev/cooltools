@@ -7,6 +7,7 @@ import cooler
 
 from .lib._query import CSRSelector
 from .lib import peaks, numutils
+from .lib.common import ThreadLimit
 
 logging.basicConfig(level=logging.INFO)
 
@@ -39,7 +40,7 @@ def get_n_pixels(bad_bin_mask, window=10, ignore_diags=2):
             )
     return n_pixels
 
-
+@ThreadLimit(limits=1)
 def insul_diamond(pixel_query, bins, window=10, ignore_diags=2, norm_by_median=True):
     """
     Calculates the insulation score of a Hi-C interaction matrix.
@@ -117,7 +118,7 @@ def insul_diamond(pixel_query, bins, window=10, ignore_diags=2, norm_by_median=T
 
     return score, n_pixels, sum_balanced, sum_counts
 
-
+@ThreadLimit(limits=1)
 def calculate_insulation_score(
     clr,
     window_bp,
@@ -350,7 +351,7 @@ def _insul_diamond_dense(mat, window=10, ignore_diags=2, norm_by_median=True):
             score /= np.nanmedian(score)
     return score
 
-
+@ThreadLimit(limits=1)
 def _find_insulating_boundaries_dense(
     clr,
     window_bp=100000,

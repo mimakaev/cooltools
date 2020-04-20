@@ -15,9 +15,12 @@ from sklearn.cluster import Birch
 import cooler
 
 from .lib.numutils import LazyToeplitz, get_kernel
+from .lib.common import ThreadLimit
 
-from bioframe.io import formats
-
+try:
+    from bioframe import formats
+except (ModuleNotFoundError,ImportError):
+    from bioframe.io import formats    
 
 # these are the constants from HiCCUPS, that dictate how initial histogramms
 # for lambda-chunking are computed: W1 is the # of logspaced lambda bins,

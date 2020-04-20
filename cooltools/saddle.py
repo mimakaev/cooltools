@@ -5,6 +5,7 @@ from cytoolz import merge
 import numpy as np
 import pandas as pd
 from .lib import numutils
+from .lib.common import ThreadLimit
 
 import bioframe
 
@@ -240,7 +241,7 @@ def _accumulate(S, C, getmatrix, digitized, reg1, reg2, min_diag, max_diag, verb
             S[i, j] += np.sum(data)
             C[i, j] += float(len(data))
 
-
+@ThreadLimit(limits=1)
 def make_saddle(
     getmatrix,
     binedges,

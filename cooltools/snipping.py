@@ -10,7 +10,7 @@ import bioframe
 import cooler
 
 from .lib.numutils import LazyToeplitz
-
+from .lib.common import ThreadLimit
 
 def make_bin_aligned_windows(
     binsize, chroms, centers_bp, flank_bp=0, region_start_bp=0, ignore_index=False
@@ -135,7 +135,7 @@ def assign_regions(features, supports):
     )
     return features
 
-
+@ThreadLimit(limits=1)
 def _pileup(data_select, data_snip, arg):
     support, feature_group = arg
     # check if support region is on- or off-diagonal

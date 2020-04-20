@@ -2,8 +2,9 @@ import warnings
 import numpy as np
 import pandas as pd
 from .lib import peaks, numutils
+from .lib.common import ThreadLimit
 
-
+@ThreadLimit(limits=1)
 def dirscore(pixels, bins, window=10, ignore_diags=2, balanced=True, signed_chi2=False):
     lo_bin_id = bins.index.min()
     hi_bin_id = bins.index.max() + 1
@@ -90,7 +91,7 @@ def _dirscore_dense(A, window=10, signed_chi2=False):
     di[mask] = np.nan
     return di
 
-
+@ThreadLimit(limits=1)
 def directionality(
     clr,
     window_bp=100000,

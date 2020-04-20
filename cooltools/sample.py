@@ -3,8 +3,9 @@ import pandas as pd
 
 import cooler
 import cooler.tools
+from .lib.common import ThreadLimit
 
-
+@ThreadLimit(limits=1)
 def sample_pixels_approx(pixels, frac):
     pixels["count"] = np.random.binomial(pixels["count"], frac)
     mask = pixels["count"] > 0
@@ -42,7 +43,7 @@ def sample_pixels_exact(pixels, count):
 def _extract_pixel_chunk(chunk):
     return chunk["pixels"]
 
-
+@ThreadLimit(limits=1)
 def sample_cooler(
     clr,
     out_clr_path,

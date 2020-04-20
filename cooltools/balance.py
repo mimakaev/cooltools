@@ -10,8 +10,9 @@ import h5py
 from scipy.sparse import linalg
 from cooler.tools import split, partition
 import cooler
+from .lib.common import ThreadLimit
 
-
+@ThreadLimit(limits=1)
 def bnewt(matvec, mask, tol=1e-6, x0=None, delta=0.1, Delta=3, fl=0):
     """
     A balancing algorithm for symmetric matrices

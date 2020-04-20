@@ -1,7 +1,20 @@
 import numpy as np
 import pandas as pd
+import warnings 
 
+try: 
+    from threadpoolctl import threadpool_limits
+    from contextlib import ContextDecorator
+    class ThreadLimit(threadpool_limits, ContextDecorator):
+        pass
 
+except ModuleNotFoundError:
+    warnings.warn("threadpoolctl module is not installed; it is recommended")
+    def ThreadLimit(limits):
+        def mydec(func):
+            return func 
+        return mydec
+    
 def assign_supports(features, supports, labels=False, suffix=""):
     """
     Assign support regions to a table of genomic intervals.

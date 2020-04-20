@@ -13,6 +13,7 @@ from cooler.tools import split, partition
 import cooler
 import bioframe
 from .lib import assign_supports, numutils
+from .lib.common import ThreadLimit
 
 where = np.flatnonzero
 concat = chain.from_iterable
@@ -25,7 +26,7 @@ def _contact_areas(distbins, scaffold_length):
     inner_areas = np.maximum(scaffold_length - distbins[1:], 0) ** 2
     return 0.5 * (outer_areas - inner_areas)
 
-
+@ThreadLimit(limits=1)
 def contact_areas(distbins, region1, region2):
     if region1 == region2:
         start, end = region1
@@ -46,7 +47,7 @@ def contact_areas(distbins, region1, region2):
 
     return areas
 
-
+@ThreadLimit(limits=1)
 def compute_scaling(df, region1, region2=None, dmin=int(1e1), dmax=int(1e7), n_bins=50):
 
     import dask.array as da
@@ -73,7 +74,7 @@ def compute_scaling(df, region1, region2=None, dmin=int(1e1), dmax=int(1e7), n_b
     return distbins, obs, areas
 
 
-
+@ThreadLimit(limits=1)
 def lattice_pdist_frequencies(n, points):
     """
     Distribution of pairwise 1D distances among a collection of distinct
@@ -104,7 +105,7 @@ def lattice_pdist_frequencies(n, points):
     x[points] = 1
     return np.round(fftconvolve(x, x[::-1], mode="full")).astype(int)[-n:]
 
-
+@ThreadLimit(limits=1)
 def count_bad_pixels_per_diag(n, bad_bins):
     """
     Efficiently count the number of bad pixels on each upper diagonal of a
@@ -226,7 +227,6 @@ def count_all_pixels_per_block(clr, supports):
         for j in range(i + 1, n):
             blocks[supports[i], supports[j]] = x[i] * x[j]
     return blocks
-
 
 
 def count_bad_pixels_per_block(clr, supports, weight_name="weight", bad_bins=None):
@@ -371,7 +371,7 @@ def _sum_diagonals(df, field):
     reduced.name = field + ".sum"
     return reduced
 
-
+@ThreadLimit(limits=1)
 def cis_expected(
     clr, regions, field="balanced", chunksize=1000000, use_dask=True, ignore_diags=2
 ):
@@ -508,7 +508,7 @@ def cis_expected(
     dtable["balanced.avg"] = dtable["balanced.sum"] / dtable["n_valid"]
     return dtable
 
-
+@ThreadLimit(limits=1)
 def trans_expected(clr, chromosomes, chunksize=1000000, use_dask=False):
     """
     Aggregate the signal in intrachromosomal blocks.
@@ -589,7 +589,7 @@ def trans_expected(clr, chromosomes, chunksize=1000000, use_dask=False):
 
 ###################
 
-
+@ThreadLimit(limits=1)
 def make_diag_tables(clr, supports, weight_name="weight", bad_bins=None):
     """
     For every support region infer diagonals that intersect this region
@@ -747,7 +747,7 @@ def _blocksum_asymm(clr, fields, transforms, supports1, supports2, span):
         (int(i), int(j)): group[fields].sum() for (i, j), group in pixel_groups.items()
     }
 
-
+@ThreadLimit(limits=1)
 def diagsum(
     clr,
     supports,
@@ -821,7 +821,7 @@ def diagsum(
 
     return dtables
 
-
+@ThreadLimit(limits=1)
 def diagsum_asymm(
     clr,
     supports1,
@@ -901,7 +901,7 @@ def diagsum_asymm(
 
     return dtables
 
-
+@ThreadLimit(limits=1)
 def blocksum_pairwise(
     clr,
     supports,

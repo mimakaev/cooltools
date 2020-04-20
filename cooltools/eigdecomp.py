@@ -4,6 +4,7 @@ import scipy.stats
 
 import pandas as pd
 from .lib import numutils
+from .lib.common import ThreadLimit
 
 import bioframe
 
@@ -58,7 +59,7 @@ def _phase_eigs(eigvals, eigvecs, phasing_track, sort_metric=None):
 
     return eigvals, eigvecs
 
-
+@ThreadLimit(limits=1)
 def cis_eig(
     A, n_eigs=3, phasing_track=None, ignore_diags=2, clip_percentile=0, sort_metric=None
 ):
@@ -172,7 +173,7 @@ def _fake_cis(A, cismask):
     numutils.fake_cis(A, cismask)
     return A
 
-
+@ThreadLimit(limits=1)
 def trans_eig(
     A,
     partition,
